@@ -1,0 +1,66 @@
+---
+- hosts: all
+  sudo: true
+  gather_facts: False
+
+  pre_tasks:
+    - raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    - setup:
+
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+
+    - name: add group "tomcat"
+      group: name=tomcat
+
+    - name: add user "tomcat"
+      user: name=tomcat group=tomcat home=/opt/tomcat createhome=no
+      become: true
+      become_method: sudo
+
+    - name: Download Tomcat
+      #get_url: url=http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.2/apache-tomee-7.0.2-plume.tar.gz dest=/opt/apache-tomee-7.0.2-plume.tar.gz
+      get_url: url=http://13.126.59.117:8081/artifactory/list/libs-release-local/debian-packages/apache-tomee-7.0.2-plume.tar.gz dest=/opt/apache-tomee-7.0.2-plume.tar.gz url_username=admin url_password=qwer1350
+
+    - name: Extract Tomcat archive
+      unarchive: 
+            src: /opt/apache-tomee-7.0.2-plume.tar.gz 
+            dest: /opt
+            remote_src: yes
+    - name: Chenge directory name
+      command: mv  /opt/apache-tomee-plume-7.0.2 /opt/tomcat
+
+
+    - name: Change ownership of Tomcat installation
+      file: path=/opt/tomcat owner=tomcat group=tomcat state=directory recurse=yes
+
+    - name: copy the config file
+      copy:
+        src: /home/ubuntu/AWS-ansible/tomcat-conf/tomcat.service.tmpl
+        dest: /etc/systemd/system/tomcat.service
+        mode: u=rwx,g=rx,o=rx
+    - name: copy the config file
+      copy:
+        src: /home/ubuntu/AWS-ansible/tomcat-conf/tomcat-users.xml.tmpl 
+        dest: /opt/tomcat/conf/tomcat-users.xml
+        mode: u=rwx,g=rx,o=rx
+    - name: copy the config file
+      copy:
+        src: /home/ubuntu/AWS-ansible/tomcat-conf/context.xml.tmpl 
+        dest: /opt/tomcat/webapps/manager/META-INF/context.xml
+        mode: u=rwx,g=rx,o=rx
+
+    - name: daemon reload
+      systemd: daemon_reload=yes
+
+    - name: enable tomcat startup
+      systemd:
+         name: tomcat
+         enabled: yes
+         state: restarted
+
+    - name: port forwording
+      command: sudo iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+

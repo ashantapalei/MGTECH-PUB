@@ -1,0 +1,37 @@
+version: "2"
+services:
+  maven-pkg:
+    image: maven
+    volumes:
+      - /home/ubuntu/AWS-ansible/dockerised-java:/project
+    working_dir: /project
+    command: bash -c "mvn package"
+
+  tomcat-app:
+    build:
+      context: ..
+      dockerfile: ./Docker/Dockerfile.tomcat
+    image: tomcat:install
+    container_name: tomcat-webapp
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/ubuntu/AWS-ansible/dockerised-java/target/DockerExample.war:/opt/tomcat/webapps/ROOT.war
+      - /home/ubuntu/AWS-ansible/dockerised-java/target/DockerExample:/opt/tomcat/webapps/ROOT
+    command: bash -c "/opt/tomcat/bin/catalina.sh run"
+
+  mysql:
+    image: mysql:latest
+    container_name: tomcat-mysql
+    environment:
+      - MYSQL_DATABASE=emmaus # Change {{db-name}}
+      - MYSQL_ROOT_PASSWORD=qwer1350 # Change {{root-password}}
+      - MYSQL_USER=qwer1350 # Change {{username}}
+      - MYSQL_PASSWORD=qwer1350 # Change {{db-password}}
+#    volumes:
+#      - /opt/mysql-datadir:/var/lib/mysql
+#    ports:
+#      - "3306:3306"
+     
+

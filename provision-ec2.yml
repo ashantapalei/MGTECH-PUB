@@ -1,0 +1,67 @@
+---
+- name: Configuring the EC2 Instance
+  hosts: localhost
+  connection: local
+  tasks:
+      - name: generating temp cradentials
+        sts_assume_role:
+          role_arn: "arn:aws:iam::211831525993:role/launchec2"
+          role_session_name: "someRoleSession"
+          region: ap-south-1
+        register: assumed_role
+
+      - name: create a security group in us-east-1
+        ec2_group:
+          name: ansibletest
+          description: an example ec2 group
+          region: ap-south-1
+          aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
+          aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
+          security_token: "{{ assumed_role.sts_creds.session_token }}"
+          rules:
+            - proto: tcp
+              from_port: 80
+              to_port: 80
+              cidr_ip: 0.0.0.0/0
+            - proto: tcp
+              from_port: 22
+              to_port: 22
+              cidr_ip: 0.0.0.0/0
+            - proto: tcp
+              from_port: 8080
+              to_port: 8080
+              cidr_ip: 0.0.0.0/0
+
+        register: security_group
+
+      - name: creating EC2 instance
+        ec2:
+          instance_tags:
+             Name: Tomcat-test
+          key_name: tomcat-app-test
+          instance_type: t2.micro
+          image: ami-2b95a744
+          wait: yes
+          region: ap-south-1
+          group: ansibletest
+          exact_count: 1
+          count_tag:
+             Name: Tomcat-test
+          vpc_subnet_id: subnet-2d972844
+          assign_public_ip: yes
+        register: newec2
+
+      - name: Associating after allocating elastic IP
+        ec2_eip:
+          in_vpc: yes
+          reuse_existing_ip_allowed: yes
+          state: present
+          region: ap-south-1
+          device_id: "{{ newec2.instance_ids[0] }}"
+          ip: 13.126.198.142
+        register: instance_eip
+      - debug: var=instance_eip.public_ip
+
+      - name: wait for the servers to appear on the network
+        wait_for: host={{ instance_eip.public_ip }} port=22 delay=10 timeout=180 state=started
+        with_items: newec2.tagged_instances

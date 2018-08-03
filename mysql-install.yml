@@ -1,0 +1,36 @@
+---
+- hosts: all
+  sudo: true
+  gather_facts: False
+
+  tasks:
+    - name: Update apt packages
+      command: apt-get autoremove mysql-server -y
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+
+    - name: copy the DB dump
+      copy:
+        src: /opt/jenkins/workspace/database-setup-test/dbecsdev.sql
+        dest: /tmp/dbecsdev.sql
+        mode: u=rwx,g=rx,o=rx
+
+    - name: copy the DB dump
+      copy:
+        src: /home/ubuntu/AWS-ansible/mysql.sh
+        dest: /tmp/mysql.sh
+        mode: u=rwx,g=rx,o=rx
+
+    - name: copy the DB dump
+      copy:
+        src: /home/ubuntu/AWS-ansible/restore-DB.sh
+        dest: /tmp/restore-DB.sh
+        mode: u=rwx,g=rx,o=rx
+
+    - name: Installing MysQl
+      command: bash /tmp/mysql.sh
+
+    - name: Installing MysQl
+      command: bash /tmp/restore-DB.sh
+
