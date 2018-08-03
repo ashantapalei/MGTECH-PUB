@@ -1,0 +1,22 @@
+---
+- name: Configuring the EC2 Instance
+  hosts: localhost
+  connection: local
+  tasks:
+      - name: generating temp cradentials
+        sts_assume_role:
+          role_arn: "arn:aws:iam::211831525993:role/launchec2"
+          role_session_name: "someRoleSession"
+          region: ap-south-1
+        register: assumed_role
+
+      - name: Stop & terminate EC2 VM
+        ec2:
+          region: ap-south-1
+          aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
+          aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
+          security_token: "{{ assumed_role.sts_creds.session_token }}"
+          instance_tags:
+            Name: Tomcat-test
+          state: stopped
+           
