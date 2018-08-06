@@ -16,13 +16,13 @@
         dest: /tmp/dbecsdev.sql
         mode: u=rwx,g=rx,o=rx
 
-    - name: copy the DB dump
+    - name: copy files
       copy:
         src: /home/ubuntu/AWS-ansible/mysql.sh
         dest: /tmp/mysql.sh
         mode: u=rwx,g=rx,o=rx
 
-    - name: copy the DB dump
+    - name: copy files
       copy:
         src: /home/ubuntu/AWS-ansible/restore-DB.sh
         dest: /tmp/restore-DB.sh
@@ -31,6 +31,6 @@
     - name: Installing MysQl
       command: bash /tmp/mysql.sh
 
-    - name: Installing MysQl
+    - name: Restore Database
       command: bash /tmp/restore-DB.sh
 
