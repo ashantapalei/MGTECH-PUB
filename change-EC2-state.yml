@@ -10,13 +10,22 @@
           region: ap-south-1
         register: assumed_role
 
-      - name: Stop & terminate EC2 VM
-        ec2:
+      - name: EC2 Facts
+        ec2_instance_facts:
           region: ap-south-1
           aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
           aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
           security_token: "{{ assumed_role.sts_creds.session_token }}"
+          filters:
+            "tag:Name": "{{ ec2_tag }}"
+        register: ec2vm
+
+      - name: Restarting the VM
+        ec2:
+          region: ap-south-1
           instance_tags:
-            Name: Tomcat-test
-          state: stopped
-           
+            Name: "{{ ec2_tag }}"
+          state: "{{ ec2_state }}"
+
+
+
