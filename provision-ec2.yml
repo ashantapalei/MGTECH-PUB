@@ -39,7 +39,7 @@
           instance_tags:
              Name: Tomcat-test
           key_name: tomcat-app-test
-          instance_type: t2.micro
+          instance_type: t2.small
           image: ami-2b95a744
           wait: yes
           region: ap-south-1
