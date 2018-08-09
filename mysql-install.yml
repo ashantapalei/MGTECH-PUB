@@ -12,7 +12,7 @@
 
     - name: copy the DB dump
       copy:
-        src: /opt/jenkins/workspace/database-setup-test/dbecsdev.sql
+        src: /opt/jenkins/workspace/Ansible-test-database/dbecsdev.sql
         dest: /tmp/dbecsdev.sql
         mode: u=rwx,g=rx,o=rx
 
