@@ -51,6 +51,8 @@
           assign_public_ip: yes
         register: newec2
 
+      - local_action: copy content={{ newec2.instance_ids[0] }} dest=/home/ubuntu/AWS-ansible/instance_data
+
       - name: Associating after allocating elastic IP
         ec2_eip:
           in_vpc: yes
