@@ -12,3 +12,10 @@ ansible_ssh_private_key_file=/home/ubuntu/AWS-ansible/KEYS/tomcat-app-test.pem
 
 13.232.141.113 ansible_user=ubuntu
 
+[nagiosserver:vars]
+ansible_ssh_private_key_file=/home/ubuntu/AWS-ansible/KEYS/tomcat-app-test.pem
+
+[nagiosserver]
+
+13.232.131.53 ansible_user=ec2-user
+

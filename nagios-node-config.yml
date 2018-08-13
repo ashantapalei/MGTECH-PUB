@@ -1,0 +1,28 @@
+---
+- hosts: all
+  sudo: true
+  gather_facts: False
+
+  tasks:
+    - name: Removing unused packages
+      command: sudo apt-get autoremove nagios-plugins nagios-nrpe-server -y
+      command: sudo apt-get purge nagios-plugins nagios-nrpe-server -y
+
+    - name: Installing nagios-client
+      command: sudo apt-get install nagios-plugins nagios-nrpe-server -y
+
+    - replace:
+        path: /etc/nagios/nrpe.cfg
+        regexp: 'allowed_hosts=127.0.0.1'
+        replace: 'allowed_hosts=127.0.0.1,{{ nagios_host_IP }}'
+        backup: yes
+
+    - replace:
+        path: /etc/nagios/nrpe.cfg
+        regexp: '#server_address=127.0.0.1'
+        replace: '/server_address={{ server_IP }}'
+        backup: yes
+
+    - name: Configure node
+      command: service nagios-nrpe-server restart
+

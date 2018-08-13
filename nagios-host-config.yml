@@ -1,0 +1,35 @@
+---
+- hosts: all
+  sudo: true
+  gather_facts: False
+
+  pre_tasks:
+    - raw: test -e /usr/bin/python || (yum -y update && yum install -y python-minimal)
+    - setup:
+
+  tasks:
+    - name: copy files
+      copy:
+        src: /home/ubuntu/AWS-ansible/tomcat-conf/nagios.cnf.tmpl
+        dest: /tmp/nagios.cnf.tmpl
+        mode: u=rwx,g=rx,o=rx
+
+    - replace:
+        path: /tmp/nagios.cnf.tmpl
+        regexp: 'server_host'
+        replace: '{{ server_host }}'
+        backup: yes
+
+    - replace:
+        path: /tmp/nagios.cnf.tmpl
+        regexp: 'server_IP'
+        replace: '{{ server_IP }}'
+        backup: yes
+
+    - name: Configure node
+      command: cp /tmp/nagios.cnf.tmpl /usr/local/nagios/etc/servers/{{ server_host }}.cfg
+
+    - name: reload service
+      command: sudo systemctl reload nagios.service
+
+
