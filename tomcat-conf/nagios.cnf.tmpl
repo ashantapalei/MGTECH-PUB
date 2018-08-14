@@ -43,4 +43,17 @@ define service {
         check_command                   check_local_disk!20%!10%!/
 }
 
+define service{
+        use                            generic-service
+        host_name                      server_host
+        service_description            Check RAM
+        check_command                  check_nrpe!check_mem
+}
+
+define service{
+        use                            generic-service
+        host_name                      server_host
+        service_description            Current Users
+        check_command                  check_nrpe!check_users
+}
 

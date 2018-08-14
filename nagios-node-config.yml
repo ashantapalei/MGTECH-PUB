@@ -20,7 +20,7 @@
     - replace:
         path: /etc/nagios/nrpe.cfg
         regexp: '#server_address=127.0.0.1'
-        replace: '/server_address={{ server_IP }}'
+        replace: 'server_address=0.0.0.0'
         backup: yes
 
     - name: Configure node
