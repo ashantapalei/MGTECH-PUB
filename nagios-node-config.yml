@@ -23,6 +23,18 @@
         replace: 'server_address=0.0.0.0'
         backup: yes
 
-    - name: Configure node
+    - name: Update bashrc for PythonBrew for foo user
+      lineinfile:
+        dest: /etc/nagios/nrpe.cfg
+        line: "command[check_mem]=/usr/lib/nagios/plugins/check_mem -f -w 20 -c 10"
+        owner: root
+        state: present
+        insertafter: EOF
+        create: True
+
+    - name: downlode check_mem plugin
+      get_url: url=https://raw.githubusercontent.com/justintime/nagios-plugins/master/check_mem/check_mem.pl dest=/usr/lib/nagios/plugins/check_mem mode=0755
+
+    - name: Restart the service
       command: service nagios-nrpe-server restart
 
