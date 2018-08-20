@@ -6,13 +6,27 @@ services:
       context: ..
       dockerfile: ./ELK/Dockerfile.elasticsearch
     image: elasticsearch:latest
-    container_name: elasticsearch
-    #privileged: true
+    container_name: elasticsearch_elk
+    volumes:
+      - ./ssl:/etc/ssl/
     restart: always
     ports:
       - "9200:9200"
       - "9300:9300"
     command: bash -c "/etc/init.d/elasticsearch start && tail -f /dev/null"
+
+  logstash:
+    build:
+      context: ..
+      dockerfile: ./ELK/Dockerfile.logstash
+    image: logstash:latest
+    container_name: logstash_elk
+    restart: always
+    volumes:
+      - ./ssl:/etc/ssl/
+#    ports:
+#      - ""
+    command: bash -c "tail -f /dev/null"
 
   kibana:
     build:
@@ -25,6 +39,14 @@ services:
       - "5601:5601"
     command: bash -c "/etc/init.d/kibana start && tail -f /dev/null"
 
-
-     
+  nginx:
+    build:
+      context: ..
+      dockerfile: ./ELK/Dockerfile.nginx
+    image: nginx:latest
+    container_name: nginx_elk
+    restart: always
+    ports:
+      - "80:80"
+    command: bash -c "/etc/init.d/nginx start && tail -f /dev/null"
 
