@@ -12,3 +12,8 @@ RUN apt-get update && \
 RUN wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | apt-key add - && \
     echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee /etc/apt/sources.list.d/logstash-2.2.x.list
 RUN apt-get update && apt-get install logstash -y
+RUN apt-get install net-tools curl -y
+
+COPY ./ELK/config/02-beats-input.conf.tmpl /etc/logstash/conf.d/02-beats-input.conf
+COPY ./ELK/config/10-syslog-filter.conf.tmpl /etc/logstash/conf.d/10-syslog-filter.conf
+COPY ./ELK/config/30-elasticsearch-output.conf.tmpl /etc/logstash/conf.d/30-elasticsearch-output.conf 

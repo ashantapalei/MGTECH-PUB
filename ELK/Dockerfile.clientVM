@@ -1,0 +1,9 @@
+FROM ubuntu:latest
+
+RUN apt-get update -y && apt-get install wget gnupg -y
+RUN echo "deb https://packages.elastic.co/beats/apt stable main" |  tee -a /etc/apt/sources.list.d/beats.list
+RUN wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+RUN apt-get update && apt-get install filebeat
+COPY ./ELK/config/filebeat.yml /etc/filebeat/filebeat.yml
+COPY ./ELK/ssl/certs/logstash-forwarder.crt /etc/pki/tls/certs/logstash-forwarder.crt
+RUN chmod 755 /etc/pki/tls/certs/logstash-forwarder.crt
