@@ -46,6 +46,8 @@ services:
     image: nginx:latest
     container_name: nginx_elk
     restart: always
+    volumes:
+      - /var/log/nginx:/var/log/nginx/
     ports:
       - "80:80"
     command: bash -c "/etc/init.d/nginx start && tail -f /dev/null"
@@ -58,9 +60,6 @@ services:
     container_name: client_VM
     restart: always
     volumes:
-#      - ./ssl:/etc/pki/tls/
       - /var/log:/var/log-host/
-    ports:
-      - "801:801"
     command: bash -c "tail -f /dev/null"
 
