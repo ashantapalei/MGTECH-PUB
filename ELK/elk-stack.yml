@@ -61,5 +61,5 @@ services:
     restart: always
     volumes:
       - /var/log:/var/log-host/
-    command: bash -c "tail -f /dev/null"
+    command: bash -c "/etc/init.d/filebeat start &&tail -f /dev/null"
 

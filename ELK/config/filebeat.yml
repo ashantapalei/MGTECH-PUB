@@ -23,6 +23,7 @@ filebeat.prospectors:
     #- /var/log/kern.log
     #- /var/log/auth.log
     - /var/log-host/nginx/access.log
+    - /var/log-host/nginx/error.log
     #- c:\programdata\elasticsearch\logs\*
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
