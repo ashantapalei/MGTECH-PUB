@@ -1,0 +1,65 @@
+FROM ubuntu:14.04
+
+RUN apt-get update && \
+    apt-get install -y net-tools curl wget gnupg
+
+### Installing Apache & PHP
+RUN apt-get install apache2 apache2-utils -y && \
+    /etc/init.d/apache2 start && \
+    apt-get install php5 libapache2-mod-php5 php5-mcrypt -y
+ 
+RUN useradd nagios && groupadd nagcmd && usermod -a -G nagcmd nagios && \
+    apt-get update
+
+RUN apt-get install -y build-essential libgd2-xpm-dev openssl libssl-dev xinetd apache2-utils unzip
+
+
+RUN cd ~ && curl -L -O https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.3.4.tar.gz && \
+    tar zxf nagios-*.tar.gz
+
+RUN cd /root/nagios-4.3.4 && \
+    ./configure --with-nagios-group=nagios --with-command-group=nagcmd && \
+    make all && \
+    make install && \
+    make install-commandmode && \
+    make install-init && \
+    make install-config
+
+RUN cd /root/nagios-4.3.4 && /usr/bin/install -c -m 644 sample-config/httpd.conf /etc/apache2/sites-available/nagios.conf && \
+    usermod -G nagcmd www-data
+
+### Install Nagios Plugins
+RUN cd ~ && curl -L -O http://nagios-plugins.org/download/nagios-plugins-2.1.1.tar.gz && \
+    tar xvf nagios-plugins-*.tar.gz
+
+
+RUN cd /root/nagios-plugins-2.1.1 && \
+    ./configure --with-nagios-user=nagios --with-nagios-group=nagios --with-openssl && \
+    make && \
+    make install
+
+### Install NRPE
+RUN cd ~ && curl -L -O http://downloads.sourceforge.net/project/nagios/nrpe-2.x/nrpe-2.15/nrpe-2.15.tar.gz && \
+    tar xvf nrpe-*.tar.gz
+
+RUN cd /root/nrpe-2.15 && \
+    ./configure --enable-command-args --with-nagios-user=nagios --with-nagios-group=nagios --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu && \
+    make all && \
+    make install && \
+    make install-xinetd && \
+    make install-daemon-config
+
+RUN sed -i 's,127.0.0.1,127.0.0.1 172.31.19.237,g' /etc/xinetd.d/nrpe
+RUN mkdir -p /usr/local/nagios/etc/servers && chmod 777 /tmp 
+COPY ./Nagios/configs/nagios.cfg /usr/local/nagios/etc/nagios.cfg
+COPY ./Nagios/configs/contacts.cfg /usr/local/nagios/etc/objects/contacts.cfg
+COPY ./Nagios/configs/commands.cfg /usr/local/nagios/etc/objects/commands.cfg
+COPY ./Nagios/configs/nagios.pl /usr/local/bin/slack_nagios.pl
+RUN  chmod 755 /usr/local/bin/slack_nagios.pl
+
+### configure Apache to serve the Nagios user interface
+RUN a2enmod rewrite && a2enmod cgi
+RUN htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin ankur
+RUN ln -s /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-enabled/
+
+RUN apt-get install libwww-perl libcrypt-ssleay-perl -y

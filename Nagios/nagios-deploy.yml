@@ -1,0 +1,21 @@
+version: "3"
+services:
+
+  nagios:
+    image: nagios:monitor
+    container_name: nagios_monitor
+    volumes:
+      - ./node:/usr/local/nagios/etc/servers/
+    networks:
+      - nagios-monitor
+    deploy:
+      replicas: 2
+    restart: always
+    ports:
+      - "80:80"
+      - "5666:5666"
+    command: bash -c "/etc/init.d/xinetd start && /etc/init.d/apache2 start && /etc/init.d/nagios start && tail -f /dev/null"
+
+networks:
+  nagios-monitor:
+
