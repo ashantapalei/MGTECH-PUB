@@ -6,6 +6,7 @@ services:
     container_name: nagios_monitor
     volumes:
       - ./node:/usr/local/nagios/etc/servers/
+#      - /usr/local/nagios:/usr/local/nagios
     networks:
       - nagios-monitor
     deploy:

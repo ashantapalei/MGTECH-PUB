@@ -1,6 +1,6 @@
 version: "2"
 services:
-
+### Refrance: https://www.digitalocean.com/community/tutorials/how-to-install-nagios-4-and-monitor-your-servers-on-ubuntu-14-04 ###
   nagios:
     build:
       context: ..
@@ -9,6 +9,7 @@ services:
     container_name: nagios_monitor
     volumes:
       - ./node:/usr/local/nagios/etc/servers/
+#      - /usr/local/nagios:/usr/local/nagios
     restart: always
     ports:
       - "80:80"
