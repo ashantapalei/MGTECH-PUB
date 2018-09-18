@@ -1,0 +1,10 @@
+---
+- hosts: "{{ Host }}"
+  sudo: true
+  gather_facts: False
+
+  tasks:
+    - pause: seconds=60
+    - name: Scheaduling VM shutdown
+      command: sudo shutdown -h "{{ Time_in_minutes }}"
+
