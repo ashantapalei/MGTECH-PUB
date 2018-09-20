@@ -20,15 +20,15 @@ ansible_ssh_private_key_file=/home/ubuntu/AWS-ansible/KEYS/tomcat-app-test.pem
 13.232.131.53 ansible_user=ubuntu
 
 [Bambooserver:vars]
-ansible_ssh_private_key_file=/home/ubuntu/AWS-ansible/KEYS/DevOpsDemo.pem
+ansible_ssh_private_key_file=/home/ubuntu/AWS-ansible/KEYS/tomcat-app-test.pem
 
 [Bambooserver]
-13.232.164.4 ansible_user=ec2-user
+13.232.164.4 ansible_user=ubuntu
 
 [Artifactoryserver:vars]
-ansible_ssh_private_key_file=/home/ubuntu/AWS-ansible/KEYS/DevOpsDemo
+ansible_ssh_private_key_file=/home/ubuntu/AWS-ansible/KEYS/tomcat-app-test.pem
 
 [Artifactoryserver]
-13.126.59.117 ansible_user=ubuntu
+13.126.59.117 ansible_user=ec2-user
 
 
