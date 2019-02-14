@@ -1,0 +1,40 @@
+---
+- name: Create a new EC2 instance
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+
+    - name: Create a new ec2 security group
+      ec2_group:
+        name: workrepo-group
+        description: This security group is for to run workrepo application
+        #vpc_id: 12345
+        region: "{{ region }}"
+        rules:
+          - proto: tcp
+            ports:
+              - 80
+              - 22
+              - 443
+              - 3000
+              - 8080
+            cidr_ip: 0.0.0.0/0
+
+    - name: Create an ec2 instance
+      ec2:
+         key_name: "{{ key_name }}"
+         group: ['workrepo-group']
+         instance_type: "{{ instance_type}}"
+         image: "{{ image }}"
+         wait: true
+         region: "{{ region }}"
+         count: 1
+         count_tag:
+            Name: PHP_Demo
+         instance_tags:
+            Name: PHP_Demo
+         #vpc_subnet_id: subnet-2a813566
+         #assign_public_ip: yes
+      register: ec2
+
