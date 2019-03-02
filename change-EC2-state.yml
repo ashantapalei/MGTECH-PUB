@@ -3,22 +3,22 @@
   hosts: localhost
   connection: local
   tasks:
-      - name: generating temp cradentials
-        sts_assume_role:
-          role_arn: "arn:aws:iam::211831525993:role/launchec2"
-          role_session_name: "someRoleSession"
-          region: ap-south-1
-        register: assumed_role
+      # - name: generating temp cradentials
+      #   sts_assume_role:
+      #     role_arn: "arn:aws:iam::211831525993:role/launchec2"
+      #     role_session_name: "someRoleSession"
+      #     region: ap-south-1
+      #   register: assumed_role
 
-      - name: EC2 Facts
-        ec2_instance_facts:
-          region: ap-south-1
-          aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
-          aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
-          security_token: "{{ assumed_role.sts_creds.session_token }}"
-          filters:
-            "tag:Name": "{{ ec2_tag }}"
-        register: ec2vm
+      # - name: EC2 Facts
+      #   ec2_instance_facts:
+      #     region: ap-south-1
+      #     aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
+      #     aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
+      #     security_token: "{{ assumed_role.sts_creds.session_token }}"
+      #     filters:
+      #       "tag:Name": "{{ ec2_tag }}"
+      #   register: ec2vm
 
       - name: Restarting the VM
         ec2:
