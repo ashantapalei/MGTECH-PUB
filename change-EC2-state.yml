@@ -5,7 +5,7 @@
   tasks:
       # - name: generating temp cradentials
       #   sts_assume_role:
-      #     role_arn: "arn:aws:iam::211831525993:role/launchec2"
+      #     role_arn: "arn:aws:iam::aws:policy/AdministratorAccess"
       #     role_session_name: "someRoleSession"
       #     region: ap-south-1
       #   register: assumed_role
