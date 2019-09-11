@@ -3,7 +3,7 @@
   gather_facts: false
   vars:
     instance_ids:
-      - 'i-0db8679aade24b3d7'
+      - 'i-06ffa6ded29617a44'
       
     region: ap-south-1
   tasks:
@@ -11,7 +11,8 @@
       ec2:
         instance_ids: '{{ instance_ids }}'
         region: '{{ region }}'
-        state: stopped
+        state: '{{ ec2_state }}'
+        name: '{{ ec2_tag }}'
         wait: True
         vpc_subnet_id: subnet-29e63245
         assign_public_ip: yes
