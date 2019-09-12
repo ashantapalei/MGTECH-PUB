@@ -5,7 +5,11 @@
   tasks:
       # - name: generating temp cradentials
       #   sts_assume_role:
+<<<<<<< HEAD
       #     role_arn: "arn:aws:iam::211831525993:role/launchec2"
+=======
+      #     role_arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+>>>>>>> d99fa5ecb6a8aa56fa9cce8a74e8f19c70bc9305
       #     role_session_name: "someRoleSession"
       #     region: ap-south-1
       #   register: assumed_role
@@ -26,6 +30,9 @@
           instance_tags:
             Name: "{{ ec2_tag }}"
           state: "{{ ec2_state }}"
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> d99fa5ecb6a8aa56fa9cce8a74e8f19c70bc9305

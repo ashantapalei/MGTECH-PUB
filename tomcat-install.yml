@@ -21,8 +21,8 @@
       become_method: sudo
 
     - name: Download Tomcat
-      #get_url: url=http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.2/apache-tomee-7.0.2-plume.tar.gz dest=/opt/apache-tomee-7.0.2-plume.tar.gz
-      get_url: url=http://13.126.59.117:8081/artifactory/list/libs-release-local/debian-packages/apache-tomee-7.0.2-plume.tar.gz dest=/opt/apache-tomee-7.0.2-plume.tar.gz url_username=admin url_password=qwer1350
+      get_url: url=http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.2/apache-tomee-7.0.2-plume.tar.gz dest=/opt/apache-tomee-7.0.2-plume.tar.gz
+      #get_url: url=http://13.126.59.117:8081/artifactory/list/libs-release-local/debian-packages/apache-tomee-7.0.2-plume.tar.gz dest=/opt/apache-tomee-7.0.2-plume.tar.gz url_username=admin url_password=qwer1350
 
     - name: Extract Tomcat archive
       unarchive: 
